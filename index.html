@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rialo Meme Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -16,13 +16,13 @@
       width: 100%;
       max-width: 500px;
       height: auto;
-      aspect-ratio: 1/1;
+      touch-action: none;
     }
     .template-img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      aspect-ratio: 4/3;
+      height: auto;
+      object-fit: contain;
+      max-height: 150px;
     }
     .hamburger div {
       width: 24px;
@@ -36,21 +36,74 @@
         display: none;
       }
     }
-    /* Error message styling */
+    @media (max-width: 640px) {
+      .template-img {
+        max-height: 120px;
+      }
+      .glow-text {
+        text-shadow: 0 0 3px rgba(0,0,0,0.2);
+      }
+      .template-title {
+        font-size: 0.85rem;
+        line-height: 1.2;
+        min-height: 2.5rem;
+        display: block;
+      }
+    }
+    @media (max-width: 360px) {
+      #template-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+      .template-title {
+        font-size: 0.75rem;
+      }
+    }
     .error-message {
       color: red;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       margin-top: 0.5rem;
       display: none;
+      line-height: 1.2;
+    }
+    input, button {
+      min-height: 44px;
+      font-size: 0.875rem;
+    }
+    footer {
+      background-color: #000;
+      color: #d1d5db;
+    }
+    footer > div {
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 1.5rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+    }
+    footer p {
+      text-align: center;
+      margin: 0;
+    }
+    @media (min-width: 640px) {
+      footer > div {
+        flex-direction: row;
+        font-size: 0.875rem;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+      }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans text-gray-900">
-
   <!-- Navbar -->
   <nav class="bg-black text-white shadow-md fixed top-0 left-0 right-0 z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-      <h1 class="text-xl sm:text-2xl font-extrabold glow-text truncate">
+      <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold glow-text truncate">
         Rialo Meme Generator
       </h1>
       <div class="hamburger md:hidden cursor-pointer" id="hamburger">
@@ -71,43 +124,40 @@
     </div>
   </nav>
 
-  <div class="h-16 md:h-20"></div>
+  <div class="h-16 sm:h-20"></div>
 
   <!-- Template Section -->
-  <section id="templates" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-    <h2 class="text-xl sm:text-2xl font-bold text-black mb-6 glow-text">🔥 Choose a Meme Template</h2>
-    <div id="template-gallery" class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+  <section id="templates" class="max-w-7xl mx-auto px-2 sm:px-4 py-8 sm:py-10">
+    <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-black mb-4 sm:mb-6 glow-text">🔥 Choose a Meme Template</h2>
+    <div id="template-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6">
       <!-- JS will populate templates -->
     </div>
   </section>
 
   <!-- Generator Section -->
-  <section id="generator" class="bg-white rounded-2xl shadow-lg max-w-6xl mx-auto px-4 sm:px-6 py-10 mb-12">
-    <div class="grid md:grid-cols-2 gap-6 sm:gap-10">
-      <!-- Canvas -->
+  <section id="generator" class="bg-white rounded-2xl shadow-lg max-w-6xl mx-auto px-2 sm:px-4 py-8 sm:py-10 mb-12">
+    <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
       <div class="flex flex-col items-center">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4 glow-text">Your Meme Preview</h3>
-        <canvas id="meme-canvas" class="w-full max-w-lg border-2 border-gray-300 rounded-lg shadow-md bg-white"></canvas>
+        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 glow-text">Your Meme Preview</h3>
+        <canvas id="meme-canvas" class="w-full border-2 border-gray-300 rounded-lg shadow-md bg-white"></canvas>
         <p id="canvas-error" class="error-message">Failed to load image. Please try another template or upload an image.</p>
       </div>
-
-      <!-- Controls -->
       <div class="bg-[#EFE8DB] p-4 sm:p-6 rounded-xl shadow-inner">
-        <h3 class="text-lg font-semibold text-black mb-4 glow-text">Customize Meme</h3>
-        <div class="space-y-5">
+        <h3 class="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4 glow-text">Customize Meme</h3>
+        <div class="space-y-4 sm:space-y-5">
           <div>
             <label class="block text-sm font-medium text-gray-800">Top Caption</label>
             <input type="text" id="top-caption" placeholder="Enter top caption"
-              class="mt-1 p-2 w-full border rounded-md shadow-sm focus:ring-black focus:border-black text-sm sm:text-base">
+              class="mt-1 p-2 w-full border rounded-md shadow-sm focus:ring-black focus:border-black text-sm">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-800">Bottom Caption</label>
             <input type="text" id="bottom-caption" placeholder="Enter bottom caption"
-              class="mt-1 p-2 w-full border rounded-md shadow-sm focus:ring-black focus:border-black text-sm sm:text-base">
+              class="mt-1 p-2 w-full border rounded-md shadow-sm focus:ring-black focus:border-black text-sm">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-800">Font Size</label>
-            <input type="range" id="font-size" min="16" max="64" value="32" class="w-full accent-black">
+            <input type="range" id="font-size" min="12" max="48" value="24" class="w-full accent-black">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-800">Text Color</label>
@@ -117,12 +167,12 @@
           <div>
             <label class="block text-sm font-medium text-gray-800">Upload Custom Image</label>
             <input type="file" id="custom-image" accept="image/*"
-              class="mt-1 p-2 w-full border rounded-md cursor-pointer text-sm sm:text-base">
+              class="mt-1 p-2 w-full border rounded-md cursor-pointer text-sm">
             <p id="upload-error" class="error-message">Failed to load uploaded image.</p>
           </div>
           <div class="mt-4">
             <button id="generate-btn"
-              class="w-full bg-black text-white px-4 py-2 rounded-md shadow hover:bg-gray-800 transition text-sm sm:text-base">
+              class="w-full bg-black text-white px-4 py-2 rounded-md shadow hover:bg-gray-800 transition text-sm">
               Generate & Download Meme
             </button>
           </div>
@@ -133,9 +183,9 @@
 
   <!-- Footer -->
   <footer class="bg-black text-gray-300 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm">
+    <div>
       <p>&copy; <span id="year"></span> Rialo Meme Generator. All rights reserved.</p>
-      <p class="mt-3 sm:mt-0">Built with  by <span class="text-yellow-300">0xklint</span></p>
+      <p>Built with  by <span class="text-yellow-300">0xklint</span></p>
     </div>
   </footer>
 
@@ -153,6 +203,16 @@
       hamburger.children[1].classList.toggle('opacity-0');
       hamburger.children[2].classList.toggle('-rotate-45');
       hamburger.children[2].classList.toggle('-translate-y-2');
+    });
+
+    // Close mobile menu when a link is clicked
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        hamburger.children[0].classList.remove('rotate-45', 'translate-y-2');
+        hamburger.children[1].classList.remove('opacity-0');
+        hamburger.children[2].classList.remove('-rotate-45', '-translate-y-2');
+      });
     });
 
     // Meme templates
@@ -176,7 +236,7 @@
     let currentImage = new Image();
     let topCaption = '';
     let bottomCaption = '';
-    let fontSize = 32;
+    let fontSize = 24;
     let textColor = '#000000';
     let topCaptionPos = { x: 0, y: 0 };
     let bottomCaptionPos = { x: 0, y: 0 };
@@ -187,38 +247,40 @@
 
     // Set canvas size dynamically
     function resizeCanvas() {
-      const maxWidth = Math.min(window.innerWidth - 40, 500);
-      canvas.width = maxWidth * window.devicePixelRatio; // Support high-DPI screens
-      canvas.height = maxWidth * window.devicePixelRatio;
+      const maxWidth = Math.min(window.innerWidth - 32, 500);
+      canvas.width = maxWidth * window.devicePixelRatio;
+      const imageAspectRatio = currentImage.width && currentImage.height ? currentImage.width / currentImage.height : 1;
+      canvas.height = maxWidth * imageAspectRatio * window.devicePixelRatio;
       canvas.style.width = `${maxWidth}px`;
-      canvas.style.height = `${maxWidth}px`;
+      canvas.style.height = `${maxWidth * imageAspectRatio}px`;
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       topCaptionPos = { x: maxWidth / 2, y: maxWidth * 0.1 };
-      bottomCaptionPos = { x: maxWidth / 2, y: maxWidth * 0.9 };
+      bottomCaptionPos = { x: maxWidth / 2, y: maxWidth * imageAspectRatio * 0.9 };
       drawMeme();
     }
-    resizeCanvas();
+
+    // Initial canvas setup
     window.addEventListener('resize', resizeCanvas);
+    currentImage.onload = () => {
+      canvasError.style.display = 'none';
+      resizeCanvas();
+    };
+    currentImage.onerror = () => {
+      canvasError.style.display = 'block';
+    };
 
     // Populate gallery
     const gallery = document.getElementById('template-gallery');
     templates.forEach(template => {
       const div = document.createElement('div');
-      div.className = 'cursor-pointer hover:scale-105 transition-transform';
+      div.className = 'cursor-pointer hover:scale-105 transition-transform flex flex-col items-center';
       div.innerHTML = `
-        <img src="${template.url}" alt="${template.name}" class="template-img rounded-md shadow">
-        <p class="text-center text-xs sm:text-sm mt-2 text-black font-medium">${template.name}</p>
+        <img src="${template.url}" alt="${template.name}" class="template-img rounded-md shadow" loading="lazy">
+        <p class="template-title text-center text-black font-medium mt-2">${template.name}</p>
       `;
       div.addEventListener('click', () => {
         currentImage.src = template.url;
-        currentImage.crossOrigin = 'Anonymous'; // Attempt to handle CORS
-        currentImage.onload = () => {
-          canvasError.style.display = 'none';
-          drawMeme();
-        };
-        currentImage.onerror = () => {
-          canvasError.style.display = 'block';
-        };
+        currentImage.crossOrigin = 'Anonymous';
       });
       gallery.appendChild(div);
     });
@@ -226,13 +288,6 @@
     // Load default template
     currentImage.src = templates[0].url;
     currentImage.crossOrigin = 'Anonymous';
-    currentImage.onload = () => {
-      canvasError.style.display = 'none';
-      drawMeme();
-    };
-    currentImage.onerror = () => {
-      canvasError.style.display = 'block';
-    };
 
     // Inputs
     document.getElementById('top-caption').addEventListener('input', e => {
@@ -261,7 +316,7 @@
           currentImage.src = reader.result;
           currentImage.onload = () => {
             uploadError.style.display = 'none';
-            drawMeme();
+            resizeCanvas();
           };
           currentImage.onerror = () => {
             uploadError.style.display = 'block';
@@ -321,15 +376,17 @@
 
       ctx.font = `${fontSize}px Impact`;
       const topTextWidth = ctx.measureText(topCaption).width;
+      const topTextHeight = fontSize * 1.2;
       if (x > topCaptionPos.x - topTextWidth / 2 && x < topCaptionPos.x + topTextWidth / 2 &&
-          y > topCaptionPos.y - fontSize && y < topCaptionPos.y) {
+          y > topCaptionPos.y - topTextHeight && y < topCaptionPos.y + topTextHeight / 2) {
         isDragging = true;
         draggedCaption = 'top';
       }
 
       const bottomTextWidth = ctx.measureText(bottomCaption).width;
+      const bottomTextHeight = fontSize * 1.2;
       if (x > bottomCaptionPos.x - bottomTextWidth / 2 && x < bottomCaptionPos.x + bottomTextWidth / 2 &&
-          y > bottomCaptionPos.y - fontSize && y < bottomCaptionPos.y) {
+          y > bottomCaptionPos.y - bottomTextHeight && y < bottomCaptionPos.y + bottomTextHeight / 2) {
         isDragging = true;
         draggedCaption = 'bottom';
       }
@@ -352,7 +409,26 @@
     function drawMeme() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       try {
-        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+        const imgWidth = currentImage.width;
+        const imgHeight = currentImage.height;
+        const canvasWidth = canvas.width / window.devicePixelRatio;
+        const canvasHeight = canvas.height / window.devicePixelRatio;
+        const imgAspectRatio = imgWidth / imgHeight;
+        const canvasAspectRatio = canvasWidth / canvasHeight;
+
+        let drawWidth, drawHeight, offsetX, offsetY;
+        if (imgAspectRatio > canvasAspectRatio) {
+          drawWidth = canvasWidth;
+          drawHeight = canvasWidth / imgAspectRatio;
+          offsetX = 0;
+          offsetY = (canvasHeight - drawHeight) / 2;
+        } else {
+          drawHeight = canvasHeight;
+          drawWidth = canvasHeight * imgAspectRatio;
+          offsetX = (canvasWidth - drawWidth) / 2;
+          offsetY = 0;
+        }
+        ctx.drawImage(currentImage, offsetX, offsetY, drawWidth, drawHeight);
       } catch (error) {
         console.error('Error drawing image:', error);
         canvasError.style.display = 'block';
@@ -363,7 +439,7 @@
       ctx.textAlign = 'center';
       ctx.fillStyle = textColor;
       ctx.strokeStyle = 'black';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = Math.max(1, fontSize / 16);
 
       if (topCaption) {
         ctx.fillText(topCaption, topCaptionPos.x, topCaptionPos.y);
@@ -383,6 +459,13 @@
         }
       });
     });
+
+    // Prevent zooming on double-tap
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
   </script>
 </body>
 </html>
